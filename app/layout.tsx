@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Nunito } from 'next/font/google'
+import { Roboto } from 'next/font/google'
 import './globals.css'
 import Navbar from './components/navbar/Navbar'
 import ClientOnly from './components/navbar/ClientOnly'
@@ -9,8 +9,9 @@ import LoginModal from './components/modals/LoginModal'
 import getCurrentUser from './actions/getCurrentUser'
 import RentModal from './components/modals/RentModal'
 
-const font = Nunito({
-  subsets: ["latin"]
+const font = Roboto({
+  subsets: ["latin"],
+  weight: '500'
 })
 
 export const metadata: Metadata = {

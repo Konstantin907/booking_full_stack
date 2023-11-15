@@ -11,7 +11,6 @@ import {
   useForm
 } from "react-hook-form";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
-import { error, log } from "console";
 import Modal from "./Modal";
 import Heading from "../Heading";
 import Input from "../inputs/Input";
@@ -59,7 +58,7 @@ const RegisterModal = () => {
     const toggle = useCallback(()=>{
       registerModal.onOpen();
       loginModal.onClose();
-    }, []) 
+    }, [loginModal, registerModal]) 
 
 //our inputs have two elements also body and footer:
 const bodyContent = (
