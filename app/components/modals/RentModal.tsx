@@ -11,6 +11,9 @@ import CategoryBox from "../navbar/CategoryBox";
 import { icons } from "react-icons";
 
 import { FieldValues, useForm } from "react-hook-form";
+import CountrySelect from "../inputs/CountrySelect";
+import dynamic from "next/dynamic"
+
 
 enum STEPS {
     CATEGORY = 0,
@@ -53,6 +56,13 @@ export default function RentModal() {
     });
 
     const category = watch("category");
+    const location = watch("location");
+
+//ovako se mapa importuje umjesto standardnog:
+//svaki put se mapa rerenderuje nakon promjene lokacije
+     const Map = useMemo(() => dynamic(() => import('../Map'), { 
+    ssr: false 
+  }), [location]);
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value,{
@@ -122,14 +132,30 @@ export default function RentModal() {
     </div>
   )
     
-
+if(step === STEPS.LOCATION) {
+    bodyContent = (
+        <div className=" flex flex-col gap-8">
+            <Heading 
+            title="What is you place location?"
+            subtitle="Help guests finds you"
+            />
+            <CountrySelect
+            value={location}
+                onChange={(value)=> setCustomValue("location", value)}
+             />
+             <Map
+                center={location?.latlng}
+             />
+        </div>
+    )
+}
 
     return (
     <div>
       <Modal 
         isOpen = {rentModal.isOpen}
         onClose={rentModal.onClose}
-        onSubmit={rentModal.onClose}
+        onSubmit={onNext}
         //ovdje dodajemo secondary steps
         actionLabel={actionLabel}
         secondaryActionLabel={secondaryActionLabel}
