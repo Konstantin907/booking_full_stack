@@ -13,8 +13,9 @@ import { icons } from "react-icons";
 import { FieldValues, useForm } from "react-hook-form";
 import CountrySelect from "../inputs/CountrySelect";
 import dynamic from "next/dynamic"
+import Counter from "../inputs/Counter";
 
-
+//sve ovew korake pravimo posebno:
 enum STEPS {
     CATEGORY = 0,
     LOCATION = 1,
@@ -57,6 +58,9 @@ export default function RentModal() {
 
     const category = watch("category");
     const location = watch("location");
+    const guestCount = watch("guestCount");
+    const roomCount = watch("roomCount");
+    const bathroomCount = watch("bathroomCount");
 
 //ovako se mapa importuje umjesto standardnog:
 //svaki put se mapa rerenderuje nakon promjene lokacije
@@ -148,6 +152,38 @@ if(step === STEPS.LOCATION) {
              />
         </div>
     )
+}
+
+if(step === STEPS.INFO) {
+    bodyContent = (
+        <div className="flex flex-col gap-8">
+            <Heading 
+                title="Share some basics about place"
+                subtitle="What amenities do you have?"
+            />
+            <Counter
+                title="Guests"
+                subtitle="How many guests?"
+                value={guestCount}
+                onChange={(value) => setCustomValue("guestCount", value)}
+            />
+                    <hr />
+            <Counter
+                title="Rooms"
+                subtitle="How much rooms you have??"
+                value={roomCount}
+                onChange={(value) => setCustomValue("roomCount", value)}
+            />
+                    <hr />
+            <Counter
+                title="Bathrooms"
+                subtitle="How many bathrooms do you have??"
+                value={bathroomCount}
+                onChange={(value) => setCustomValue("bathroomCount", value)}
+            />
+        </div>
+    )
+    
 }
 
     return (
