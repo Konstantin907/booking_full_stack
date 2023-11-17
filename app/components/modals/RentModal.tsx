@@ -7,14 +7,18 @@ import { useMemo, useState } from "react";
 import Heading from "../Heading";
 import { categories } from "../navbar/Categories";
 import CategoryInputs from "../inputs/CategoryInput";
-import CategoryBox from "../navbar/CategoryBox";
-import { icons } from "react-icons";
 
-import { FieldValues, useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import CountrySelect from "../inputs/CountrySelect";
 import dynamic from "next/dynamic"
 import Counter from "../inputs/Counter";
 import ImageUpload from "../inputs/ImageUpload";
+import Input from "../inputs/Input";
+
+import {useRouter} from "next/navigation"
+
+import axios from "axios";
+import toast from "react-hot-toast";
 
 //sve ovew korake pravimo posebno:
 enum STEPS {
@@ -26,10 +30,12 @@ enum STEPS {
     PRICE = 5
 }
 export default function RentModal() {
+    const router = useRouter();
     const rentModal = useRentModal();
     //posle enuma dodajemo states za kontrolu enuma
     const [step, setStep] = useState(STEPS.CATEGORY); //ovo je default znaci 0
   //sad doajemo funkcije koje ce ici napreijed/nazad
+  const [isLoading, setIsLoading] = useState(false);
 
     //sada sve ovo sto se izabere bi trebaslo ici u formu, ovo iz CategoryInputa:
     //isto kao i u login/register modalu
@@ -85,6 +91,33 @@ export default function RentModal() {
   const onNext = () => {
     setStep((value)=> value + 1 )
   };
+
+  //ovjde ide on submit za kraj steps-a:
+  const onSubmit:SubmitHandler<FieldValues> = (data) => {
+    //prvo ako nismo na poslednjem step-u
+    if(step !== STEPS.PRICE) {
+        return onNext()
+    }
+
+    setIsLoading(true);
+    axios.post("api/listings", data)
+    .then(()=>{
+        toast.success("Listing created")
+        //refresh stranice
+        router.refresh();
+        //resetovanje
+        reset();
+        //vracanje na prvi korak i naravno zatvaranje:
+        setStep(STEPS.CATEGORY);
+        rentModal.onClose()
+    }
+    )
+    .catch(()=>{
+        toast.error("Something went wrong!")
+    }).finally(()=>{
+        setIsLoading(false);
+    })
+  }
 
   //action label and secondary action label:
   const actionLabel = useMemo(()=>{
@@ -204,12 +237,61 @@ if(step === STEPS.INFO) {
         )
       }
 
+      if(step === STEPS.DESCRIPTION) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading 
+                    title="How would you describe your place?"
+                    subtitle="Short and nice is the best!"
+                />
+                <Input
+                    id="title"
+                    label= "Title"
+                    disabled = {isLoading}
+                    register={register}
+                    errors= {errors}
+                    required
+                />
+                <hr />
+                <Input
+                    id="description"
+                    label= "Description"
+                    disabled = {isLoading}
+                    register={register}
+                    errors= {errors}
+                    required
+                />
+            </div>
+        )
+      }
+
+      if(step === STEPS.PRICE) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading
+                    title="Set your price"
+                    subtitle="How much do you want to charge per night?"
+                />
+                <Input 
+                    id="price"
+                    label= "Price"
+                    formatPrice
+                    type="number"
+                    disabled= {isLoading}
+                    register={register}
+                    errors={errors}
+                    required
+                />
+            </div>
+        )
+      }
+
     return (
     <div>
       <Modal 
         isOpen = {rentModal.isOpen}
         onClose={rentModal.onClose}
-        onSubmit={onNext}
+        onSubmit={handleSubmit(onSubmit)}
         //ovdje dodajemo secondary steps
         actionLabel={actionLabel}
         secondaryActionLabel={secondaryActionLabel}
