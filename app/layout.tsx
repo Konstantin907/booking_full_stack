@@ -36,6 +36,10 @@ export default async function RootLayout({
           <RegisterModal />
           <Navbar currentUser={currentUser} />
         </ClientOnly>
+        {/* ovjde pocinje displej za sve sto dodamo */}
+        <div className='pb-20 pt-28'>
+
+        </div>
         {children}</body>
     </html>
   )
