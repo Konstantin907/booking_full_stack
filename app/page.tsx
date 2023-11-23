@@ -38,15 +38,13 @@ if(listings.length === 0) {
           2xl:grid-cols-6
           gap-8
         ">
-          {listings.map((listing:any)=> {
-            return(
-              <ListingCard
+           {listings.map((listing) => (
+            <ListingCard
               currentUser={currentUser}
               key={listing.id}
-              data= {listing}
-              />
-            )
-          })}
+              data={listing}
+            />
+          ))}
         </div>
       </Container>
     </ClientOnly>

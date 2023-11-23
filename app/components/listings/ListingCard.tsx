@@ -2,19 +2,19 @@
 
 import { Listing, Reservation } from "@prisma/client";
 
-import { SafeUser } from "@/app/types";
+import { SafeUser, SafeListing } from "@/app/types";
 import { format } from "date-fns";  
 
 import { useRouter } from "next/navigation";
 import useCountries from "@/app/hooks/useCountries";
 import { useCallback, useMemo } from "react";
 
-import Image from "next/image";
+import Image from "next/image"; 
 import HeartButton from "../HeartButton";
 import Button from "../Button";
 
 interface ListingCardProps {
-    data: Listing;
+    data: SafeListing;
     reservation?: Reservation; //ovo je za kasnije kad budemo radili rezervaciju
     onAction?: (id:string) => void;
     disabled?: boolean;
@@ -34,7 +34,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
     currentUser
 }) => {
 const router = useRouter();
-//use countr4ie shook nam treba
+//use countries shook nam treba
 const { getByValue } = useCountries(); //posto u db nismo stavlili flag, copuntry etc, samo location value
 
 const location = getByValue(data.locationValue);
@@ -72,7 +72,7 @@ const reservationDate = useMemo(()=> {
 
 return (
     <div
-    onClick={()=> router.push(`/listings/${data.id}`)} //kasnije se pravi
+    onClick={()=> router.push(`/listings/${data.id}`)} //kasnije se pravi na individualnu stranicu
     className="col-span-1 cursor-pointer group"
     >
         <div className="flex flex-col gap-2 w-full">
